@@ -128,9 +128,9 @@ Attach these **Agent Actions** to the topic:
 |--------------|----------|-----------------------------|
 | `Get Record Details` | Retrieve Contact or Account details | No |
 | `Query Records` | Find matching Contacts by name/email/phone | No |
-| `DraftOrReviseEmail` | Generate verification email for duplicate | Yes |OOTB But might call some Hallicination, so a custom prompt template(Contact Verification Email) was created and this action was removed in V4|
+| `DraftOrReviseEmail` | Generate verification email for duplicate - removed in Version 4 Replaced with Contact Verificaiton Email | Yes |
 | `CreateContact` | Create new Contact record if verified as new | No |
-| `Contact Verification Email` | Creates an email draft to verify whether a newly entered contact already exists in CRM. | Yes |
+| `Contact Verification Email` | Creates an email draft to verify whether a newly entered contact already exists in CRM.  | Yes |
 
 ---
 
