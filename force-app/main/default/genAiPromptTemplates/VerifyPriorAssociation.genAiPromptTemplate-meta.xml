@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Verify existing contacts and confirm if an email needs to be drafted</description>
+    <developerName>VerifyPriorAssociation</developerName>
+    <masterLabel>VerifyPriorAssociation</masterLabel>
+    <templateVersions>
+        <content># Role
+Offer to draft a short email that verifies whether the matched person was previously associated with a specific company in our CRM. Use the OOTB DraftOrReviseEmail action to generate the draft. The human will review and send manually (they can update the recipient in Composer).
+
+# Ask once and store the answer in draftConsent
+I found a matching contact {!$Input:contactName}  {{$Input:contactName}} {!$Input:accountName}{{#if $Input:accountName}} associated with {!$Input:accountName} {{$Input:accountName}}{{/if}}.
+Would you like me to draft a quick email to confirm if they were previously with that company?
+
+{{#if (eq draftConsent &quot;No&quot;)}}
+Got it — I won’t draft an email. I can relate this contact to another account, show record details, or create anyway (force). What would you like to do?
+{{/if}}
+
+{{#if (eq draftConsent &quot;Yes&quot;)}}
+{{Action.DraftOrReviseEmail
+ recordId=$Input:contactId,
+ userInput=&quot;Write a concise, professional email (2–4 sentences) to confirm PRIOR association with the company on file.
+
+Subject:
+- If accountName is provided: &apos;Quick check: were you previously at {{$Input:accountName}}?&apos;
+- Otherwise: &apos;Quick check on your prior company affiliation&apos;
+
+Body must:
+- Greet {{$Input:contactName}} {!$Input:contactName} (or &apos;there&apos; if missing).
+- State our CRM shows a record previously associated with {{$Input:accountName}}  {!$Input:accountName}(or &apos;a company we have on file&apos; if not provided).
+- Ask the recipient to confirm whether they WERE previously with that company and, if not, to share their CURRENT company and preferred email/phone.
+- Optional one-liner if data exists: &apos;On file we have {{#if $Input:emailOnFile}} {!$Input:emailOnFile}Email: {{$Input:emailOnFile}} {!$Input:emailOnFile}{{/if}} {{#if $Input:phoneOnFile}} {!$Input:phoneOnFile}Phone:  {!$Input:contactName}{{$Input:phoneOnFile}} {!$Input:phoneOnFile}{{/if}}.&apos;
+- Keep neutral, courteous tone; avoid generic &apos;confirm identity&apos; phrasing.
+- Do not send automatically; the user will review and can update the recipient before sending.&quot;
+}}
+Draft prepared. Review the subject and body, update the recipient if needed in Composer, and click Send when ready.
+{{/if}}
+
+</content>
+        <inputs>
+            <apiName>contactId</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>contactId</masterLabel>
+            <referenceName>Input:contactId</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>contactName</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>contactName</masterLabel>
+            <referenceName>Input:contactName</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>accountName</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>accountName</masterLabel>
+            <referenceName>Input:accountName</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>emailOnFile</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>emailOnFile</masterLabel>
+            <referenceName>Input:emailOnFile</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>phoneOnFile</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>phoneOnFile</masterLabel>
+            <referenceName>Input:phoneOnFile</referenceName>
+            <required>false</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>7SLV5bylk1DPlpfjH9EySuFa9f853m0LJ5cVeMBDTZY=_1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

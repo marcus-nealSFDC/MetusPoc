@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>64.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <name>InitOutputs</name>
+        <label>Init Outputs</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>ContactId</assignToReference>
+            <operator>Assign</operator>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Message</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Initialized</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>WasExisting</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>HasEmail</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>SetCreateOutputs</name>
+        <label>SetCreateOutputs</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>ContactId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Create_Contact</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>WasExisting</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Message</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Contact Created</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>SetError</name>
+        <label>SetError</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>Message</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>CreateContact error: &quot; &amp; &quot; {!$Flow.FaultMessage}</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>SetExistingOutputs</name>
+        <label>SetExistingOutputs</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>WasExisting</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>ContactId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>GetExistingByEmail.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Message</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Matched existing contact by email</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <decisions>
+        <name>FoundExisting</name>
+        <label>FoundExisting?</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Create_Contact</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No</defaultConnectorLabel>
+        <rules>
+            <name>Yes1</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>GetExistingByEmail.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>SetExistingOutputs</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>HasEmail</name>
+        <label>HasEmail?</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Create_Contact</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No</defaultConnectorLabel>
+        <rules>
+            <name>Yes</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Email</leftValueReference>
+                <operator>IsBlank</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>GetExistingByEmail</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <description>Creates a new Salesforce Contact—or, if an exact email match exists, returns that existing Contact instead—to prevent duplicates. Optionally relates the Contact to a specific Account when an AccountId is provided.
+Behavior (happy path)
+
+Initialize outputs.
+
+If Email is provided, attempt a Get Records (first match by Email).
+
+If found → treat as existing: set WasExisting = true, return ContactId, and do not create a new record.
+
+If no email or no match → Create Records (Contact) with provided fields (LastName required; FirstName, Email, Phone, AccountId optional).
+
+Set outputs and exit.
+
+Fault handling
+Any fault in Get/Create sets a concise error Message and exits (no partial changes beyond the platform’s normal transaction behavior).
+
+Inputs (Available for input)
+
+FirstName (Text, optional) — Contact given name.
+
+LastName (Text, required) — Contact family name.
+
+Email (Text, optional) — Used for exact-match dedupe.
+
+Phone (Text, optional) — Primary phone (E.164 preferred but not required).
+
+AccountId (Text, optional) — 18-char Account Id to relate the Contact.
+
+Outputs (Available for output)
+
+ContactId (Text) — Id of the matched or newly created Contact.
+
+WasExisting (Boolean) — true if matched by email; false if created.
+
+Message (Text) — Result summary or concise error detail.
+
+Assumptions &amp; notes
+
+Email de-duplication is exact match only.
+
+Field-level security, validation rules, and triggers apply as normal.
+
+Extendable: add more dedupe logic (e.g., First+Last+Account) or phone normalization if needed.
+
+Designed for use by a Create Contact Agent Action in the General CRM topic.</description>
+    <environments>Default</environments>
+    <interviewLabel>afCreateContact {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>afCreateContact</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>Create_Contact</name>
+        <label>Create Contact</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>SetCreateOutputs</targetReference>
+        </connector>
+        <faultConnector>
+            <targetReference>SetError</targetReference>
+        </faultConnector>
+        <inputAssignments>
+            <field>AccountId</field>
+            <value>
+                <elementReference>AccountId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Email</field>
+            <value>
+                <elementReference>Email</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>FirstName</field>
+            <value>
+                <elementReference>FirstName</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>LastName</field>
+            <value>
+                <elementReference>LastName</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Phone</field>
+            <value>
+                <elementReference>Phone</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Contact</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordLookups>
+        <name>GetExistingByEmail</name>
+        <label>Get Existing Email</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>FoundExisting</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Email</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Email</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Contact</object>
+        <sortField>CreatedDate</sortField>
+        <sortOrder>Desc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>InitOutputs</targetReference>
+        </connector>
+    </start>
+    <status>Draft</status>
+    <variables>
+        <name>AccountId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>ContactId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <description>Email address (optional). If provided, the Flow will try to find an existing Contact with the same email to avoid duplicates. Example: priya@example.com</description>
+        <name>Email</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>Short given name of the contact. Example: “Priya”. Leave blank if unknown.</description>
+        <name>FirstName</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>The contact’s last (family) name. Required to create a new contact. Example: Gupta.</description>
+        <name>LastName</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>Brief result text (e.g., ‘Matched existing contact by email’ or ‘Contact created’). If an error occurred, this includes a concise error message.</description>
+        <name>Message</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <description>Phone number (optional). Prefer E.164 if available. Examples: +14155550101 or 415-555-0101.</description>
+        <name>Phone</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>true if an existing Contact was found by Email; otherwise false</description>
+        <name>WasExisting</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+</Flow>

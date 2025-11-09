@@ -1,0 +1,33 @@
+{
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "ContactId" : {
+      "title" : "ContactId",
+      "description" : "Contact Id associated a contact in sf",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true,
+      "copilotAction:useHydratedPrompt" : false
+    },
+    "Message" : {
+      "title" : "Message",
+      "description" : "Brief result text (e.g., ‘Matched existing contact by email’ or ‘Contact created’). If an error occurred, this includes a concise error message.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true,
+      "copilotAction:useHydratedPrompt" : false
+    },
+    "WasExisting" : {
+      "title" : "WasExisting",
+      "description" : "true if an existing Contact was found by Email; otherwise false",
+      "lightning:type" : "lightning__booleanType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true,
+      "copilotAction:useHydratedPrompt" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

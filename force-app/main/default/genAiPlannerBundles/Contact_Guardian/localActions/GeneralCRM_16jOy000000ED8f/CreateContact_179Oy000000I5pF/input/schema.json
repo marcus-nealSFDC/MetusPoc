@@ -1,0 +1,42 @@
+{
+  "required" : [ "LastName" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "AccountId" : {
+      "title" : "AccountId",
+      "description" : "Account Id associated to the account ",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "Email" : {
+      "title" : "Email",
+      "description" : "Email address (optional). If provided, the Flow will try to find an existing Contact with the same email to avoid duplicates. Example: priya@example.com",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "FirstName" : {
+      "title" : "FirstName",
+      "description" : "Short given name of the contact. Example: “Priya”. Leave blank if unknown.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "LastName" : {
+      "title" : "LastName",
+      "description" : "The contact’s last (family) name. Required to create a new contact. Example: Gupta.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "Phone" : {
+      "title" : "Phone",
+      "description" : "Phone number (optional). Prefer E.164 if available. Examples: +14155550101 or 415-555-0101.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

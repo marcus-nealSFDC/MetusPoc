@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>7SLV5bylk1DPlpfjH9EySuFa9f853m0LJ5cVeMBDTZY=_2</activeVersionIdentifier>
+    <developerName>Contact_Verification_Email</developerName>
+    <masterLabel>Contact Verification Email</masterLabel>
+    <templateVersions>
+        <content>You are a sales operations specialist working for a company that uses Salesforce to manage contacts and accounts. You are the sender of this email, {!$User.Name}[sender&apos;s full name]. You are writing an email to an individual contact,[ recipient&apos;s full name = {!$Input:recipient}
+
+Instructions: &quot;&quot;&quot;
+Follow these instructions precisely. Don’t add any information not provided.
+Use clear, concise, and professional language in the active voice, avoiding filler or redundant phrases.
+The email should include the following:
+
+1. Generate a subject line that politely requests confirmation of contact details.
+2. The salutation must only contain the recipient&apos;s first name.
+3. Refer to the sender in the singular voice, using &quot;I&quot; rather than &quot;we&quot;.
+4. State that the system found an existing record with similar information and list the associated accounts to help the recipient verify.
+5. Ask the recipient to confirm if they are currently affiliated with one of those accounts or if their organization has changed.
+6. Maintain a courteous, professional tone, and limit the email to 3–5 sentences.
+
+Below are two sets of reference information.
+The first is a list of the recipient&apos;s current or historical accounts tagged as :Accounts.
+The second is the new or pending record creation details tagged as :NewRecord.
+
+### Accounts
+[Insert the list of all Accounts associated with this contact.]
+{!$Flow:FindAccountsByContactName.Prompt}
+### NewRecord
+[Insert details for the new contact being created, such as name, email, and company.]
+
+### Programs
+[Call the Apex class ]
+
+Follow these instructions strictly to generate the message to be sent to the contact.
+&quot;&quot;&quot;
+
+</content>
+        <inputs>
+            <apiName>recipient</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>recipient</masterLabel>
+            <referenceName>Input:recipient</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <templateDataProviders>
+            <definition>flow://FindAccountsByContactName</definition>
+            <parameters>
+                <definition>primitive://String</definition>
+                <isRequired>true</isRequired>
+                <parameterName>in_ContactName</parameterName>
+                <valueExpression>{!$Input:recipient}</valueExpression>
+            </parameters>
+            <referenceName>Flow:FindAccountsByContactName</referenceName>
+        </templateDataProviders>
+        <versionIdentifier>7SLV5bylk1DPlpfjH9EySuFa9f853m0LJ5cVeMBDTZY=_1</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content>You are a sales operations specialist working for a company that uses Salesforce to manage contacts and accounts. You are the sender of this email, sender&apos;s full name = {!$User.FirstName}&quot;&quot;{!$User.LastName} You are writing an email to an individual contact,[ recipient&apos;s full name = {!$Input:recipient}
+
+Instructions: &quot;&quot;&quot;
+Follow these instructions precisely. Don’t add any information not provided.
+Use clear, concise, and professional language in the active voice, avoiding filler or redundant phrases.
+The email should include the following:
+
+1. Generate a subject line that politely requests confirmation of contact details.
+2. The salutation must only contain the recipient&apos;s first name.
+3. Refer to the sender in the singular voice, using &quot;I&quot; rather than &quot;we&quot;.
+4. State that the system found an existing record with similar information and list the associated accounts to help the recipient verify.
+5. Ask the recipient to confirm if they are currently affiliated with one of those accounts or if their organization has changed.
+6. Maintain a courteous, professional tone, and limit the email to 3–5 sentences.
+
+Below are two sets of reference information.
+The first is a list of the recipient&apos;s current or historical accounts tagged as :Accounts.
+The second is the new or pending record creation details tagged as :NewRecord.
+
+### Accounts
+[Insert the list of all Accounts associated with this contact.]
+{!$Flow:FindAccountsByContactName.Prompt}
+### NewRecord
+[Insert details for the new contact being created, such as name, email, and company.]
+
+### Programs
+[Call the Apex class ]
+
+Follow these instructions strictly to generate the message to be sent to the contact.
+&quot;&quot;&quot;
+
+</content>
+        <inputs>
+            <apiName>recipient</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>recipient</masterLabel>
+            <referenceName>Input:recipient</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <templateDataProviders>
+            <definition>flow://FindAccountsByContactName</definition>
+            <parameters>
+                <definition>primitive://String</definition>
+                <isRequired>true</isRequired>
+                <parameterName>in_ContactName</parameterName>
+                <valueExpression>{!$Input:recipient}</valueExpression>
+            </parameters>
+            <referenceName>Flow:FindAccountsByContactName</referenceName>
+        </templateDataProviders>
+        <versionIdentifier>7SLV5bylk1DPlpfjH9EySuFa9f853m0LJ5cVeMBDTZY=_2</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

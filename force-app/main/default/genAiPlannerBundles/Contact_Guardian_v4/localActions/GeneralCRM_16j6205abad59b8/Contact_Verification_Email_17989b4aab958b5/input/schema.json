@@ -1,0 +1,14 @@
+{
+  "required" : [ "Input:recipient" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "Input:recipient" : {
+      "title" : "recipient",
+      "description" : "Recipient (Contact) – The contact record suspected to be a duplicate.\nThe email will be addressed to this contact’s name and use their associated email address from CRM.\n\n⚙️ If multiple matches exist, the agent will display them in the draft body so you can confirm the correct one before sending.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

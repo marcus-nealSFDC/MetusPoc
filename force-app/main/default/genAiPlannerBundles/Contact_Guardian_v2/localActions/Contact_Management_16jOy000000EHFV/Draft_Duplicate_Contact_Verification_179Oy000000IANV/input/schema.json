@@ -1,0 +1,41 @@
+{
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "Input:contactId" : {
+      "title" : "contactId",
+      "description" : "This contact Id Identified for duplication contact ",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "Input:phoneOnFile" : {
+      "title" : "phoneOnFile",
+      "description" : "Phone number on existing contact ",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "Input:emailOnFile" : {
+      "title" : "emailOnFile",
+      "description" : "email on existing contact ",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "Input:accountName" : {
+      "title" : "accountName",
+      "description" : "Account NAME on existing contact ",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "Input:contactName" : {
+      "title" : "contactName",
+      "description" : "Contact Name on existing contact ",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

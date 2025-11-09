@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <description>An internal assistant that prevents duplicate Contacts. It checks for existing Contacts by email/phone/name/area code, shows all associated Accounts, and guides the user to stop, relate, or create correctly. When no record exists, it can create a Contact on the current Account or create a new Contact.</description>
+    <localActionLinks>
+        <genAiFunctionName>AnswerQuestionsWithKnowledge_16jOy000000ED8f</genAiFunctionName>
+    </localActionLinks>
+    <localTopicLinks>
+        <genAiPluginName>GeneralCRM_16jOy000000ED8f</genAiPluginName>
+    </localTopicLinks>
+    <localTopics>
+        <fullName>GeneralCRM_16jOy000000ED8f</fullName>
+        <aiPluginUtterances>
+            <developerName>shownewleads</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>show-new-leads</masterLabel>
+            <utterance>Show new leads.</utterance>
+        </aiPluginUtterances>
+        <aiPluginUtterances>
+            <developerName>gettopopportunities</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>get-top-opportunities</masterLabel>
+            <utterance>Get top amount opportunities.</utterance>
+        </aiPluginUtterances>
+        <aiPluginUtterances>
+            <developerName>utterance_0_1762349965568</developerName>
+            <language>en_US</language>
+            <masterLabel>utterance_0_1762349965568</masterLabel>
+            <utterance>Create a contact with name Jamie Spencer-Neal and email address is wjoo@gmail.com</utterance>
+        </aiPluginUtterances>
+        <canEscalate>false</canEscalate>
+        <description>Engages and interacts with the user about any request that could be CRM data related. This could be tasks such as identify and summarize records, answer queries, aggregate data, find and query objects, update records, or drafting and refining emails.</description>
+        <developerName>GeneralCRM_16jOy000000ED8f</developerName>
+        <genAiPluginInstructions>
+            <description>There are multiple available data retrieval functions at your disposal. You can use each one of them multiple times if needed. You should use functions as many times as necessary until you have all the data required to fulfill the request of the user. You can perform extra calls if you think you can get additional relevant information.</description>
+            <developerName>activitytimeline0</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>activity-timeline0</masterLabel>
+            <sortOrder>0</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>Do not declare your intent i.e. &quot;I will now retrieve the data&quot; - Just fetch the data.</description>
+            <developerName>activitytimeline1</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>activity-timeline1</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>Identify the object type (i.e., leads, opportunities, accounts) the user asks about. If unclear, confirm with the user and make a suggestion based on the query context and history.</description>
+            <developerName>activitytimeline2</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>activity-timeline2</masterLabel>
+            <sortOrder>2</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>When only the name of a record is mentioned in the user request, you MUST call the IdentifyRecordByName action to get the necessary IDs.</description>
+            <developerName>answerquestions</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>answer-questions</masterLabel>
+            <sortOrder>3</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>Always call QueryRecords &amp; QueryRecordsWithAggregate passing plain natural language english as input. You must Include the record ID in the input if available.</description>
+            <developerName>dataretrieval</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>data-retrieval</masterLabel>
+            <sortOrder>4</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>When a user asks for a summary or overview of a record, use GetRecordDetails to get an overview of the data of the record, then use other data retrieval actions as needed.</description>
+            <developerName>draftorreviseemail</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>draft-or-revise-email</masterLabel>
+            <sortOrder>5</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>When asked for a summary on multiple records, you must iterate over all record IDs and for each one call GetRecordDetails.</description>
+            <developerName>getactivitydetails0</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>get-activity-details0</masterLabel>
+            <sortOrder>6</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>If the user asks about activities you must call GetActivitiesTimeline.</description>
+            <developerName>identifyobjecttype</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>identify-object-type</masterLabel>
+            <sortOrder>7</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>When providing the Activity Types for GetActivitiesTimeline, choose all the types that are relevant to the user request. Examples - User Request 1 - &quot;What questions does John Doe have that need addressing?&quot;, Activity Types - &quot;Call&quot;, &quot;Email&quot;. User Request 2 - &quot;What are the next activities for John Doe?&quot;, Activity Types - &quot;Task&quot;, &quot;Event&quot;.</description>
+            <developerName>identifyrecord</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>identify-record</masterLabel>
+            <sortOrder>8</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>When asked about recent activities, you should provide the answer, starting from the last 30 days and ending on the current date, unless a specific date range is specified by the user.</description>
+            <developerName>instructions_0_1761835421820</developerName>
+            <language>en_US</language>
+            <masterLabel>instructions_0_1761835421820</masterLabel>
+            <sortOrder>9</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>When you are asked about a single Call, Meeting, Email or any other single specific activity, call GetActivityDetails. Do not call it for any other record type.</description>
+            <developerName>instructions_0_1762347445892</developerName>
+            <language>en_US</language>
+            <masterLabel>instructions_0_1762347445892</masterLabel>
+            <sortOrder>10</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>Always use DraftOrReviseEmail when asked to generate a new email or revise a previously generated email.</description>
+            <developerName>instructions_0_1762350312037</developerName>
+            <language>en_US</language>
+            <masterLabel>instructions_0_1762350312037</masterLabel>
+            <sortOrder>11</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>ExtractRecordFieldsAndValuesFromUserInput must be called prior to UpdateRecordFields.</description>
+            <developerName>instructions_0_1762351280046</developerName>
+            <language>en_US</language>
+            <masterLabel>instructions_0_1762351280046</masterLabel>
+            <sortOrder>12</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>Avoid using structured lists, bullet points, or numbered lists. Instead, present the information in complete sentences and paragraphs as if you were writing an article or a report.</description>
+            <developerName>instructions_0_1762354823909</developerName>
+            <language>en_US</language>
+            <masterLabel>instructions_0_1762354823909</masterLabel>
+            <sortOrder>13</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>User questions which can be answered by knowledge articles or documents. These questions usually want information, instructions or guidance, including but not limited to customer questions about company information, polices and frequently asked questions.</description>
+            <developerName>instructions_0_1762371625127</developerName>
+            <language>en_US</language>
+            <masterLabel>instructions_0_1762371625127</masterLabel>
+            <sortOrder>14</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>After a duplicate is identified for a Contact (i.e., an existing Contact is returned when the user was creating one), call Contact Verification Email and pass the known context: contactName, accountName, and any emailOnFile/phoneOnFile.</description>
+            <developerName>instructions_0_1762374073631</developerName>
+            <language>en_US</language>
+            <masterLabel>instructions_0_1762374073631</masterLabel>
+            <sortOrder>15</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>The user will manually send the email; do not call any send flow.</description>
+            <developerName>instructions_1_1761835421820</developerName>
+            <language>en_US</language>
+            <masterLabel>instructions_1_1761835421820</masterLabel>
+            <sortOrder>16</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>When the user requests to create or update a Contact record, ALWAYS check for potential duplicates BEFORE creation. If not duplicates are found call CreateContact and pass the know context  contactName, accountName, and any emailOnFile/phoneOnFile.
+
+1) Search logic
+   • Normalize the full name (case-insensitive, trim spaces). 
+   • Find existing Contacts with the same normalized full name.
+   • If the user supplied a phone, also search by phone area code prefix (e.g., “870”).
+   • Optionally widen by matching email domain when provided (e.g., user@domain.com → domain.com).
+
+2) Candidate handling
+   • If 1+ matches exist: PAUSE creation.
+   • Present a short, selectable list: Name | Account | Email | Phone (≤5, de-duped).
+   • Let the user pick one record or say “none.”
+
+3) Consent gate (ask ONCE when user-supplied email/phone differs)
+   • If the user selects a record AND the user-supplied email or phone (normalized; strip punctuation for phone) 
+     differs from the selected Contact’s on-file value:
+       Ask: “I found a matching contact {{Name}}{{AccountName ? &apos; associated with &apos; + AccountName : &apos;&apos;}}.
+             Would you like me to draft a quick email to confirm if they were previously with that company?”
+       Store reply as draftConsent (“Yes” / “No”).
+       a) If draftConsent == &quot;Yes&quot;:
+          - Precondition: contactId MUST be set. If not set, prompt user to select a record; do NOT proceed.
+          - If Contact.EmailOptOut == true, DO NOT draft. Say:
+            “This contact is marked Email Opt Out. Want me to draft a call script or request email permission instead?”
+            (Offer alternatives and STOP create.)
+          - Invoke subtopic: Draft Duplicate Contact Verification with ONLY these params:
+              contactId, contactName, accountName, emailOnFile, phoneOnFile
+            (That subtopic must call OOTB DraftOrReviseEmail using ONLY recordId and userInput.)
+          - After it returns, say:
+            “Draft prepared. Review the subject and body, update the recipient if needed, and click Send when ready.”
+          - STOP (do NOT create the contact).
+       b) If draftConsent == &quot;No&quot;:
+          - Say: “Got it. I won’t draft an email.”
+          - Offer options:
+              • “Relate to another account”
+              • “Show record details”
+              • “Create anyway (force)”
+            Only proceed with creation if the user explicitly chooses “Create anyway (force).”
+            Before creating, show a brief warning: “Creating despite possible duplicates can fragment communication. Proceed?”
+            Continue only on positive confirmation.
+
+4) No matches or “none”
+   • If no matches are found, or the user says “none,” proceed to create the new contact normally.
+
+5) Blocking rule
+   • While waiting for the Yes/No consent reply, BLOCK creation.
+
+6) Direct routing keywords
+   • If the user says “draft an email,” “verify contact,” or “contact this person” and a candidate recordId is already selected,
+     route DIRECTLY to the Draft Duplicate Contact Verification subtopic.
+   • Never call DraftOrReviseEmail directly from the General CRM topic.
+
+7) Parameter contract (to prevent INVALID_INPUT)
+   • The Draft Duplicate Contact Verification subtopic MUST call OOTB DraftOrReviseEmail with ONLY:
+       recordId = selected Contact Id
+       userInput = concise drafting instruction
+   • DO NOT pass latestEmailDraft, supportiveTextualData, or any extra fields.
+
+8) Success &amp; stop conditions
+   • After a successful draft: acknowledge (“Draft prepared…”) and STOP — no create.
+   • If the user later insists on create after drafting, they must explicitly say “Create anyway (force)” and confirm the warning.</description>
+            <developerName>instructions_2_1761835421820</developerName>
+            <language>en_US</language>
+            <masterLabel>instructions_2_1761835421820</masterLabel>
+            <sortOrder>17</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>If not duplicates are found call CreateContact and pass the know context  contactName, accountName, and any emailOnFile/phoneOnFile.</description>
+            <developerName>outputstyle</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>output-style</masterLabel>
+            <sortOrder>18</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>Trigger: User asks to create a Contact.
+
+Hard rule (forms):
+- NEVER call userInput or userSelect for CreateContact. Call the action directly with only parsed values.
+
+Discovery (must run first):
+1) IdentifyRecordByName(Contact) with {fullName}.
+2) If email is present, QueryRecords(&quot;contacts whose email is {email}&quot;).
+3) If 3-digit area code is present, QueryRecords(&quot;contacts whose phone starts with {areaCode}&quot; [+ &quot; and last name equals {lastName}&quot; if provided]).
+4) Merge &amp; de-dupe to max 5.
+
+If ≥1 candidate:
+- Do NOT create. Show a list: Name | Account | Email | Phone; ask user to pick or say “none of the above”.
+- On selection:
+  - Set ctx.contact.id = &lt;selectedId&gt;, ctx.contact.name = &lt;selectedName&gt;.
+  - GetRecordDetails(Contact) and set:
+    contactName ← Contact.Name
+    accountName ← Contact.Account.Name (if any)
+    emailOnFile ← Contact.Email
+    phoneOnFile ← Contact.Phone
+  - Ask once and store draftConsent:
+    &quot;I found a matching contact {{contactName}}{{accountName ? &apos; associated with &apos; + accountName : &apos;&apos;}}. Would you like me to draft a quick email to confirm if they were previously with that company?&quot;
+  - If draftConsent == &quot;Yes&quot;:
+    - If Contact.EmailOptOut == true:
+      say &quot;This contact is marked Email Opt Out. Want me to draft a call script or request email permission instead?&quot; and stop.
+    - Call subtopic Draft_Duplicate_Contact_Verification with ONLY:
+      Input:contactId, Input:contactName, Input:accountName, Input:emailOnFile, Input:phoneOnFile
+      (That subtopic must call OOTB DraftOrReviseEmail with ONLY recordId and userInput.)
+    - After return: say &quot;Draft prepared. Review the subject and body, update the recipient if needed, and click Send when ready.&quot; and stop.
+  - If draftConsent == &quot;No&quot;:
+    say &quot;Got it. I won’t draft an email.&quot;
+    Offer: &quot;Relate to another account&quot;, &quot;Show record details&quot;, or &quot;Create anyway (force)&quot;.
+    Only create if user explicitly chooses &quot;Create anyway (force)&quot; and confirms:
+      &quot;Creating despite possible duplicates can fragment communication. Proceed?&quot;
+    On positive confirmation → follow No-match create below.
+
+If 0 candidates (or user says “none of the above”):
+- Parse utterance → ctx.contact.firstName / lastName / email / phone (only those present).
+- Call CreateContact directly with ONLY provided keys (no forms, no nulls).
+
+Example create call:
+CreateContact({
+  &quot;FirstName&quot;: &quot;Jamie&quot;,
+  &quot;LastName&quot;:  &quot;Spencer-Neal&quot;,
+  &quot;Email&quot;:     &quot;wjoo@gmail.com&quot;
+})
+
+Success gate:
+- If CreateContact succeeded (ContactId or success text):
+  say &quot;Created contact {{FirstName}} {{LastName}} (Email: {{Email || &apos;—&apos;}}, Phone: {{Phone || &apos;—&apos;}}). Want me to open the record or add a task?&quot; and stop.
+- Else:
+  say &quot;I’m ready to create the contact with the details you provided. Do you want me to proceed?&quot; and stop.
+
+Direct routing:
+- If user says “draft an email”, “verify contact”, or “contact this person” and ctx.contact.id is set → route directly to Contact Verification Email. Never call DraftOrReviseEmail directly from this Topic.
+
+Parameter contracts:
+- CreateContact: ONLY keys actually present (FirstName, LastName, Email, Phone). No null/empty values. No forms.
+- Draft_Duplicate_Contact_Verification → DraftOrReviseEmail with ONLY:
+  recordId = $Input:contactId
+  userInput = concise prior-association check. No latestEmailDraft, no supportiveTextualData.
+
+Blocking rules:
+- While awaiting draftConsent or selection, do not call CreateContact.</description>
+            <developerName>proceedwithaction</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>proceed-with-action</masterLabel>
+            <sortOrder>19</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>GetRecordDetails_179Oy000000I5pF</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>GetActivitiesTimeline_179Oy000000I5pF</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>IdentifyRecordByName_179Oy000000I5pF</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>DraftOrReviseEmail_179Oy000000I5pF</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>UpdateRecordFields_179Oy000000I5pF</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>ExtractFieldsAndValuesFromUserInput_179Oy000000I5pF</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>IdentifyObjectByName_179Oy000000I5pF</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>QueryRecordsWithAggregate_179Oy000000I5pF</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>GetActivityDetails_179Oy000000I5pF</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>AnswerQuestionsWithKnowledge_179Oy000000I5pF</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>QueryRecords_179Oy000000I5pF</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>CreateContact_179Oy000000I5pF</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Contact_Verification_Email_179Oy000000I5pF</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>AnswerQuestionsWithKnowledge_179Oy000000I5pF</fullName>
+            <description>Answers questions about company policies and procedures, troubleshooting steps, or product information. For example: “What is your return policy?” “How do I fix an issue?” or “What features does a product have?”</description>
+            <developerName>AnswerQuestionsWithKnowledge_179Oy000000I5pF</developerName>
+            <invocationTarget>streamKnowledgeSearch</invocationTarget>
+            <invocationTargetType>standardInvocableAction</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>AnswerQuestionsWithKnowledge</localDeveloperName>
+            <masterLabel>Answer Questions with Knowledge</masterLabel>
+            <progressIndicatorMessage>Getting answers</progressIndicatorMessage>
+            <source>EmployeeCopilot__AnswerQuestionsWithKnowledge</source>
+        </localActions>
+        <localActions>
+            <fullName>QueryRecords_179Oy000000I5pF</fullName>
+            <description>Finds and retrieves Salesforce CRM records based on user input and specific conditions, such as field values. This action automatically identifies the correct records and object type. e.g. &apos;Find all open opportunities created in the last 5 days sorted by created date.&apos;</description>
+            <developerName>QueryRecords_179Oy000000I5pF</developerName>
+            <invocationTarget>queryRecords</invocationTarget>
+            <invocationTargetType>standardInvocableAction</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>QueryRecords</localDeveloperName>
+            <masterLabel>Query Records</masterLabel>
+            <source>EmployeeCopilot__QueryRecords</source>
+        </localActions>
+        <localActions>
+            <fullName>Contact_Verification_Email_179Oy000000I5pF</fullName>
+            <description>Creates an email draft to verify whether a newly entered contact already exists in CRM.
+When the agent detects a possible duplicate contact, it calls this action to generate a short, professional verification email listing all accounts currently associated with the matched contact name.
+The agent must not claim that the email was sent—only that it has drafted it.
+The human user will review, edit, and send the draft manually from Composer.
+
+
+Key behavior:
+
+Uses the Contact Verification Email prompt template.
+
+Passes the matched contact’s name to retrieve related accounts via the Flow (FindAccountsByContactName).
+
+Includes a bulleted list (:AccountsByName) in the email body so the human can verify which account the contact belongs to.</description>
+            <developerName>Contact_Verification_Email_179Oy000000I5pF</developerName>
+            <invocationTarget>Contact_Verification_Email</invocationTarget>
+            <invocationTargetType>generatePromptResponse</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Contact_Verification_Email</localDeveloperName>
+            <masterLabel>Contact Verification Email</masterLabel>
+            <progressIndicatorMessage>Drafting your contact verification email…</progressIndicatorMessage>
+        </localActions>
+        <localActions>
+            <fullName>IdentifyObjectByName_179Oy000000I5pF</fullName>
+            <description>Finds the Salesforce object API name by extracting an object name from the user input.</description>
+            <developerName>IdentifyObjectByName_179Oy000000I5pF</developerName>
+            <invocationTarget>identifyObject</invocationTarget>
+            <invocationTargetType>standardInvocableAction</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>IdentifyObjectByName</localDeveloperName>
+            <masterLabel>Identify Object by Name</masterLabel>
+            <source>EmployeeCopilot__IdentifyObjectByName</source>
+        </localActions>
+        <localActions>
+            <fullName>QueryRecordsWithAggregate_179Oy000000I5pF</fullName>
+            <description>Answers aggregation questions (such as count, sum, max, min, or average) about Salesforce CRM data based on the user input and specific conditions, such as field values. For example &apos;Find the number of open opportunities created in the last 5 days.&apos;</description>
+            <developerName>QueryRecordsWithAggregate_179Oy000000I5pF</developerName>
+            <invocationTarget>queryRecordsWithAggregate</invocationTarget>
+            <invocationTargetType>standardInvocableAction</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>QueryRecordsWithAggregate</localDeveloperName>
+            <masterLabel>Query Records with Aggregate</masterLabel>
+            <source>EmployeeCopilot__QueryRecordsWithAggregate</source>
+        </localActions>
+        <localActions>
+            <fullName>GetActivityDetails_179Oy000000I5pF</fullName>
+            <description>Provides data about an activity record, including its content and other key details. The record type is strictly limited to a Call, Email, Event, or Task.</description>
+            <developerName>GetActivityDetails_179Oy000000I5pF</developerName>
+            <invocationTarget>getActivityDetails</invocationTarget>
+            <invocationTargetType>standardInvocableAction</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>GetActivityDetails</localDeveloperName>
+            <masterLabel>Get Activity Details</masterLabel>
+            <progressIndicatorMessage>Getting activity details</progressIndicatorMessage>
+            <source>EmployeeCopilot__GetActivityDetails</source>
+        </localActions>
+        <localActions>
+            <fullName>IdentifyRecordByName_179Oy000000I5pF</fullName>
+            <description>Searches for Salesforce CRM records by name and returns a list of matching Salesforce CRM record IDs.</description>
+            <developerName>IdentifyRecordByName_179Oy000000I5pF</developerName>
+            <invocationTarget>identifyRecordByName</invocationTarget>
+            <invocationTargetType>standardInvocableAction</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>IdentifyRecordByName</localDeveloperName>
+            <masterLabel>Identify Record by Name</masterLabel>
+            <source>EmployeeCopilot__IdentifyRecordByName</source>
+        </localActions>
+        <localActions>
+            <fullName>DraftOrReviseEmail_179Oy000000I5pF</fullName>
+            <description>Creates an email draft or revises the latest generated email based on user input.</description>
+            <developerName>DraftOrReviseEmail_179Oy000000I5pF</developerName>
+            <invocationTarget>getDraftOrReviseEmailPrompt</invocationTarget>
+            <invocationTargetType>standardInvocableAction</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>DraftOrReviseEmail</localDeveloperName>
+            <masterLabel>Draft or Revise Email</masterLabel>
+            <progressIndicatorMessage>Crafting your email</progressIndicatorMessage>
+            <source>EmployeeCopilot__DraftOrReviseEmail</source>
+        </localActions>
+        <localActions>
+            <fullName>UpdateRecordFields_179Oy000000I5pF</fullName>
+            <description>Updates fields on a Salesforce CRM record. The action ExtractFieldsAndValuesFromUserInput must be called prior to this action to extract the record&apos;s fields and values.</description>
+            <developerName>UpdateRecordFields_179Oy000000I5pF</developerName>
+            <invocationTarget>einsteinCopilotUpdateRecord</invocationTarget>
+            <invocationTargetType>standardInvocableAction</invocationTargetType>
+            <isConfirmationRequired>true</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>UpdateRecordFields</localDeveloperName>
+            <masterLabel>Update Record</masterLabel>
+            <progressIndicatorMessage>Making updates</progressIndicatorMessage>
+            <source>EmployeeCopilot__UpdateRecordFields</source>
+        </localActions>
+        <localActions>
+            <fullName>ExtractFieldsAndValuesFromUserInput_179Oy000000I5pF</fullName>
+            <description>Extracts Salesforce CRM record fields and their corresponding field values from the user input. This action must run before updateRecord to convert user input to a Salesforce sObject.</description>
+            <developerName>ExtractFieldsAndValuesFromUserInput_179Oy000000I5pF</developerName>
+            <invocationTarget>getRecordFieldsAndValues</invocationTarget>
+            <invocationTargetType>standardInvocableAction</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>ExtractFieldsAndValuesFromUserInput</localDeveloperName>
+            <mappingAttributes>
+                <label>recordId</label>
+                <name>input_recordId</name>
+                <parameterName>recordId</parameterName>
+                <parameterType>input</parameterType>
+            </mappingAttributes>
+            <mappingAttributes>
+                <label>objectType</label>
+                <name>input_objectType</name>
+                <parameterName>objectType</parameterName>
+                <parameterType>input</parameterType>
+            </mappingAttributes>
+            <mappingAttributes>
+                <label>userInput</label>
+                <name>input_userInput</name>
+                <parameterName>userInput</parameterName>
+                <parameterType>input</parameterType>
+            </mappingAttributes>
+            <masterLabel>Extract Fields And Values From User Input</masterLabel>
+            <progressIndicatorMessage>Preparing your changes</progressIndicatorMessage>
+            <source>EmployeeCopilot__ExtractFieldsAndValuesFromUserInput</source>
+        </localActions>
+        <localActions>
+            <fullName>GetRecordDetails_179Oy000000I5pF</fullName>
+            <description>Generates a text blob containing record details, including object fields and values and records from related lists.</description>
+            <developerName>GetRecordDetails_179Oy000000I5pF</developerName>
+            <invocationTarget>getDataForGrounding</invocationTarget>
+            <invocationTargetType>standardInvocableAction</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>GetRecordDetails</localDeveloperName>
+            <masterLabel>Get Record Details</masterLabel>
+            <progressIndicatorMessage>Getting details</progressIndicatorMessage>
+            <source>EmployeeCopilot__GetRecordDetails</source>
+        </localActions>
+        <localActions>
+            <fullName>GetActivitiesTimeline_179Oy000000I5pF</fullName>
+            <description>Retrieve a timeline of all CRM activities associated with one record, including past and future activities.</description>
+            <developerName>GetActivitiesTimeline_179Oy000000I5pF</developerName>
+            <invocationTarget>getActivitiesTimeline</invocationTarget>
+            <invocationTargetType>standardInvocableAction</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>GetActivitiesTimeline</localDeveloperName>
+            <masterLabel>Get Activities Timeline</masterLabel>
+            <progressIndicatorMessage>Retrieving activities</progressIndicatorMessage>
+            <source>EmployeeCopilot__GetActivitiesTimeline</source>
+        </localActions>
+        <localActions>
+            <fullName>CreateContact_179Oy000000I5pF</fullName>
+            <description>Creates a new Salesforce Contact—or, if an exact email match exists, returns that existing Contact instead—to prevent duplicates. Optionally relates the Contact to a specific Account when an AccountId is provided.
+Behavior (happy path)
+
+Initialize outputs.
+
+If Email is provided, attempt a Get Records (first match by Email).
+
+If found → treat as existing: set WasExisting = true, return ContactId, and do not create a new record.
+
+If no email or no match → Create Records (Contact) with provided fields (LastName required; FirstName, Email, Phone, AccountId optional).
+
+Set outputs and exit.
+
+Fault handling
+Any fault in Get/Create sets a concise error Message and exits (no partial changes beyond the platform’s normal transaction behavior).
+
+Inputs (Available for input)
+
+FirstName (Text, optional) — Contact given name.
+
+LastName (Text, required) — Contact family name.
+
+Email (Text, optional) — Used for exact-match dedupe.
+
+Phone (Text, optional) — Primary phone (E.164 preferred but not required).
+
+AccountId (Text, optional) — 18-char Account Id to relate the Contact.
+
+Outputs (Available for output)
+
+ContactId (Text) — Id of the matched or newly created Contact.
+
+WasExisting (Boolean) — true if matched by email; false if created.
+
+Message (Text) — Result summary or concise error detail.
+
+Assumptions &amp; notes
+
+Email de-duplication is exact match only.
+
+Field-level security, validation rules, and triggers apply as normal.
+
+Extendable: add more dedupe logic (e.g., First+Last+Account) or phone normalization if needed.
+
+Designed for use by a Create Contact Agent Action in the General CRM topic.</description>
+            <developerName>CreateContact_179Oy000000I5pF</developerName>
+            <invocationTarget>afCreateContact</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>CreateContact</localDeveloperName>
+            <mappingAttributes>
+                <label>FirstName</label>
+                <name>input_FirstName</name>
+                <parameterName>FirstName</parameterName>
+                <parameterType>input</parameterType>
+            </mappingAttributes>
+            <mappingAttributes>
+                <label>AccountId</label>
+                <name>input_AccountId</name>
+                <parameterName>AccountId</parameterName>
+                <parameterType>input</parameterType>
+            </mappingAttributes>
+            <mappingAttributes>
+                <label>Email</label>
+                <name>input_Email</name>
+                <parameterName>Email</parameterName>
+                <parameterType>input</parameterType>
+            </mappingAttributes>
+            <mappingAttributes>
+                <label>LastName</label>
+                <name>input_LastName</name>
+                <parameterName>LastName</parameterName>
+                <parameterType>input</parameterType>
+            </mappingAttributes>
+            <mappingAttributes>
+                <label>Phone</label>
+                <name>input_Phone</name>
+                <parameterName>Phone</parameterName>
+                <parameterType>input</parameterType>
+            </mappingAttributes>
+            <masterLabel>CreateContact</masterLabel>
+            <progressIndicatorMessage>Creating Contact</progressIndicatorMessage>
+        </localActions>
+        <localDeveloperName>GeneralCRM</localDeveloperName>
+        <masterLabel>General CRM</masterLabel>
+        <pluginType>Topic</pluginType>
+        <scope>Your job is to interact and answer questions for the user about anything Salesforce or CRM data related, combining all data retrieval functions. i.e: QueryRecords(), GetRecordDetails(), GetActivitiesTimeline(), GetActivityDetails()</scope>
+        <source>EmployeeCopilot__GeneralCRM</source>
+    </localTopics>
+    <masterLabel>Contact Guardian</masterLabel>
+    <plannerActions>
+        <fullName>AnswerQuestionsWithKnowledge_16jOy000000ED8f</fullName>
+        <description>Answers questions about company policies and procedures, troubleshooting steps, or product information. For example: “What is your return policy?” “How do I fix an issue?” or “What features does a product have?”</description>
+        <developerName>AnswerQuestionsWithKnowledge_16jOy000000ED8f</developerName>
+        <invocationTarget>streamKnowledgeSearch</invocationTarget>
+        <invocationTargetType>standardInvocableAction</invocationTargetType>
+        <isConfirmationRequired>false</isConfirmationRequired>
+        <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+        <localDeveloperName>AnswerQuestionsWithKnowledge</localDeveloperName>
+        <masterLabel>Answer Questions with Knowledge</masterLabel>
+        <progressIndicatorMessage>Getting answers</progressIndicatorMessage>
+        <source>EmployeeCopilot__AnswerQuestionsWithKnowledge</source>
+    </plannerActions>
+    <plannerSurfaces>
+        <adaptiveResponseAllowed>true</adaptiveResponseAllowed>
+        <callRecordingAllowed>false</callRecordingAllowed>
+        <surface>SurfaceAction__Messaging</surface>
+        <surfaceType>Messaging</surfaceType>
+    </plannerSurfaces>
+    <plannerType>AiCopilot__ReAct</plannerType>
+</GenAiPlannerBundle>

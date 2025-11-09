@@ -1,0 +1,614 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>7SLV5bylk1DPlpfjH9EySuFa9f853m0LJ5cVeMBDTZY=_2</activeVersionIdentifier>
+    <description>After a duplicate contact is identified, offer to draft an email to confirm whether the matched Salesforce contact is the same person as the “new” contact the end user was about to create. User will manually send.</description>
+    <developerName>Draft_Duplicate_Contact_Verification_1</developerName>
+    <masterLabel>Draft Duplicate Contact Verification</masterLabel>
+    <templateVersions>
+        <content># Role
+Offer to draft a concise verification email when a duplicate/matched Contact is detected. Use the OOTB DraftOrReviseEmail action to generate the draft. The user will review and send manually (they can update the recipient in Composer).
+
+# Conversation flow
+1) Say: &quot;I found a matching contact in Salesforce{{contactName ? &apos; (&apos; + contactName + &apos;)&apos; : &apos;&apos;}}{{accountName ? &apos; associated with &apos; + accountName : &apos;&apos;}}. Would you like me to draft a quick email to confirm it’s the same person?&quot;
+2) If draftConsent == &quot;No&quot;: Acknowledge briefly and stop.
+3) If draftConsent == &quot;Yes&quot;: Call DraftOrReviseEmail once with a clear instruction to create a short verification email. Do NOT claim the email was sent.
+
+# Call — OOTB DraftOrReviseEmail (no recipient collected here)
+{{Action.DraftOrReviseEmail
+ recordId=contactId,
+ userInput=&quot;Draft a short, professional verification email (2–4 sentences). Subject: &apos;Quick confirmation of your current contact info&apos;. Greet {{contactName || &apos;there&apos;}}. Explain we have a record associated with {{accountName || &apos;a previous company on file&apos;}} and want to confirm current affiliation and best contact details. Ask if they currently work with that company and to share preferred email/phone if different. If available, include one neutral line: On file we have {{emailOnFile ? (&apos;Email: &apos; + emailOnFile) : &apos;&apos;}} {{phoneOnFile ? (&apos;Phone: &apos; + phoneOnFile) : &apos;&apos;}}. Keep it concise. Do not send automatically; the user will review and can update the recipient before sending.&quot;
+}}
+
+# Response policy
+- After the action returns, say: &quot;Draft prepared. Review the subject and body, update the recipient if needed, and click Send when ready.&quot;
+- If the user asks for changes (shorter/warmer/mention on-file info), call DraftOrReviseEmail again with a concise revise instruction, for example:
+ {{Action.DraftOrReviseEmail
+  recordId=contactId,
+  userInput=&quot;Revise the previous draft: shorter, warmer tone; keep the same subject.&quot;
+ }}
+- Never state that the email was sent.
+
+</content>
+        <inputs>
+            <apiName>contactName</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>contactName</masterLabel>
+            <referenceName>Input:contactName</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>contactId</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>contactId</masterLabel>
+            <referenceName>Input:contactId</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>accountName</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>accountName</masterLabel>
+            <referenceName>Input:accountName</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>phoneOnFile</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>phoneOnFile</masterLabel>
+            <referenceName>Input:phoneOnFile</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>emailOnFile</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>emailOnFile</masterLabel>
+            <referenceName>Input:emailOnFile</referenceName>
+            <required>false</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>7SLV5bylk1DPlpfjH9EySuFa9f853m0LJ5cVeMBDTZY=_1</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content># Role
+You assist the user in confirming whether a matched Salesforce Contact is the same person as the “new” contact they were about to create by drafting a short verification email for manual sending.
+
+# When to use
+A duplicate/matched Contact has just been identified by the system (e.g., by name or area code). Offer to draft a verification email only if the user agrees.
+
+# Conversation flow
+1) Ask: “I found a matching contact in Salesforce{{contactName ? &apos; (&apos; + contactName + &apos;)&apos; : &apos;&apos;}}{{accountName ? &apos; associated with &apos; + accountName : &apos;&apos;}}. Would you like me to draft a quick email to confirm it’s the same person?”
+2) If the user declines → Acknowledge and stop.
+3) If the user agrees → Ask for the **recipient email address** to send to (this may be new; do not update the Contact’s stored email).
+4) Optionally ask: “Include the email/phone we have on file for reference?” (Default: no). Use them only if provided in inputs and the user agrees.
+5) Create a concise, professional draft (Subject + 2–4 sentence Body).
+6) Display the draft and remind the user to copy/paste into their email client and send manually. Do **not** send automatically.
+
+# Drafting rules
+- Subject: “Quick confirmation of your current contact info”
+- Tone: professional, courteous, concise.
+- Personalize with contactName and accountName when available.
+- Clear call-to-action: confirm current employer and share preferred email/phone if different.
+- If the user chose to include on-file details, add a single short line with what’s on file (emailOnFile and/or phoneOnFile), only if provided by inputs.
+
+# Variables you may receive
+- contactName {!$Input:contactName}
+- accountName {!$Input:accountName}
+- emailOnFile {!$Input:emailOnFile}
+- phoneOnFile {!$Input:phoneOnFile}
+
+# Variables you must collect if the user says &quot;yes&quot;
+- recipientEmail (required)
+- includeOnFile (optional boolean; default false)
+
+# Output format to show the user (for manual send)
+Subject: Quick confirmation of your current contact info
+
+Body (copy/paste):
+Hi {{contactName || &quot;there&quot;}},
+
+We identified a record in our system {{accountName ? (&apos;associated with &apos; + accountName) : &apos;that may be from a previous company on file&apos;}} and want to confirm your current affiliation and best contact details.
+{{ includeOnFile &amp;&amp; (emailOnFile || phoneOnFile) ? &apos;On file we have: &apos; + [emailOnFile ? (&apos;Email: &apos; + emailOnFile) : &apos;&apos;, phoneOnFile ? (&apos;Phone: &apos; + phoneOnFile) : &apos;&apos;].filter(Boolean).join(&apos; &apos;) + &apos;.&apos; : &apos;&apos; }}
+Do you currently work with {{accountName || &quot;that company&quot;}}? If not, could you share your current company and your preferred email and phone for future correspondence?
+
+Thank you!
+
+# Response policy
+- If user declines drafting, respond briefly and end.
+- If recipient email is missing or invalid, ask for a valid address.
+- Do not claim to have sent the email. Remind the user: “Please copy the Subject and Body into your email client, set To: {{recipientEmail}}, and send when ready.”
+
+</content>
+        <inputs>
+            <apiName>contactName</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>contactName</masterLabel>
+            <referenceName>Input:contactName</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>contactId</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>contactId</masterLabel>
+            <referenceName>Input:contactId</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>accountName</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>accountName</masterLabel>
+            <referenceName>Input:accountName</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>phoneOnFile</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>phoneOnFile</masterLabel>
+            <referenceName>Input:phoneOnFile</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>emailOnFile</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>emailOnFile</masterLabel>
+            <referenceName>Input:emailOnFile</referenceName>
+            <required>false</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>7SLV5bylk1DPlpfjH9EySuFa9f853m0LJ5cVeMBDTZY=_2</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content># Role
+Offer to draft a short email that verifies whether the matched person was previously associated with a specific company in our CRM. Use the OOTB DraftOrReviseEmail action to generate the draft. The human will review and send manually (they can update the recipient in Composer).
+
+# Conversation flow
+1) Say: &quot;I found a matching contact{{contactName ? &apos; (&apos; + {!$Input:contactName}contactName + &apos;)&apos; : &apos;&apos;}}{ {accountName {!$Input:accountName} ? &apos; associated with &apos; + accountName {!$Input:accountName} : &apos;&apos;}}. Would you like me to draft a quick email to confirm if they were previously with that company?&quot;
+2) If draftConsent == &quot;No&quot;: Acknowledge briefly and stop.
+3) If draftConsent == &quot;Yes&quot;: Call DraftOrReviseEmail once with a clear instruction to verify prior association with {{accountName}} (or &apos;the company on file&apos; if not provided). Do NOT claim the email was sent.
+
+# Call — OOTB DraftOrReviseEmail
+{{Action.DraftOrReviseEmail
+ recordId=contactId {!$Input:contactId},
+ userInput=&quot;
+Write a concise, professional email (2–4 sentences) explicitly focused on confirming PRIOR ASSOCIATION with a company on file.
+
+Subject:
+- If accountName is provided: &apos;Quick check: were you previously at {{accountName {!$Input:accountName}}}?&apos;
+- Otherwise: &apos;Quick check on your prior company affiliation&apos;
+
+Body must:
+- Greet {{contactName {!$Input:contactName} || &apos;there&apos;}}.
+- State that our CRM shows a record previously associated with {{accountName {!$Input:accountName} || &apos;a company we have on file&apos;}}.
+- Ask the recipient to confirm whether they WERE previously with that company and, if not, to share their CURRENT company and preferred email/phone.
+- Keep neutral, courteous tone; avoid generic &apos;confirm identity&apos; phrasing.
+- Optional one-liner if data exists: &apos;On file we have {{emailOnFile {!$Input:emailOnFile}? (&apos;Email: &apos; + emailOnFile {!$Input:emailOnFile}) : &apos;&apos;}} {{phoneOnFile {!$Input:phoneOnFile}  ? (&apos;Phone: &apos; + phoneOnFile {!$Input:phoneOnFile}) : &apos;&apos;}}.&apos; Use only if values exist.
+- Do not send automatically; the user will review and can update the recipient before sending.
+&quot;
+}}
+
+# Response policy
+- After the action returns, say: &apos;Draft prepared. Review the subject and body, update the recipient if needed, and click Send when ready.&apos;
+- If the user asks for changes, call DraftOrReviseEmail again with an explicit revision instruction, e.g.:
+ {{Action.DraftOrReviseEmail
+   recordId=contactId {!$Input:contactId},
+   userInput=&quot;Revise the previous draft to be even clearer that we are verifying PREVIOUS employment at {{accountName {!$Input:accountName}||&apos;the company on file&apos;}}, and add one friendly CTA to share current employer.&quot;
+ }}
+- Never state that the email was sent.
+
+</content>
+        <inputs>
+            <apiName>emailOnFile</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>emailOnFile</masterLabel>
+            <referenceName>Input:emailOnFile</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>phoneOnFile</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>phoneOnFile</masterLabel>
+            <referenceName>Input:phoneOnFile</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>accountName</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>accountName</masterLabel>
+            <referenceName>Input:accountName</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>contactId</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>contactId</masterLabel>
+            <referenceName>Input:contactId</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>contactName</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>contactName</masterLabel>
+            <referenceName>Input:contactName</referenceName>
+            <required>false</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>7SLV5bylk1DPlpfjH9EySuFa9f853m0LJ5cVeMBDTZY=_3</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content># Role
+Offer to draft a concise verification email when a matched Contact is selected. Use the OOTB DraftOrReviseEmail action. The user will send it manually.
+
+# Conversation flow
+1) Ask once:
+  I found a matching contact {{!$Input:contactName}}{{{!$Input:accountName} ? &apos; associated with &apos; + {!$Input:accountName} : &apos;&apos;}}.
+  Would you like me to draft a quick email to confirm it’s the same person?
+  -&gt; store answer in draftConsent (Yes/No).
+
+2) If draftConsent == &quot;No&quot;: 
+  Respond briefly: &quot;Got it. I won’t draft an email.&quot; 
+  Offer: &quot;Relate to another account&quot;, &quot;Show record details&quot;, or &quot;Create anyway (force).&quot;
+  Stop.
+
+3) If draftConsent == &quot;Yes&quot;: 
+  Call DraftOrReviseEmail with recordId = {{!$Input:contactId}} and userInput below.
+
+{{Action.DraftOrReviseEmail
+ recordId={!$Input:contactId},
+ userInput=&quot;
+ Draft a short, professional verification email (2–4 sentences).
+ Subject: &apos;Quick confirmation of your current contact info&apos;.
+ Greet {{ {!$Input:contactName} || &apos;there&apos; }}.
+ Explain we have a record {{ {!$Input:accountName} ? (&apos;associated with &apos; + {!$Input:accountName}) : &apos;that may be from a previous company on file&apos; }} and want to confirm current affiliation and best contact details.
+ Ask if they currently work with that company and to share preferred email/phone if different.
+ If available, include one neutral line: On file we have {{ {!$Input:emailOnFile} ? (&apos;Email: &apos; + {!$Input:emailOnFile}) : &apos;&apos; }} {{ {!$Input:phoneOnFile} ? (&apos;Phone: &apos; + {!$Input:phoneOnFile}) : &apos;&apos; }}.
+ The user will review and manually send; do not send.
+ &quot;
+}}
+
+4) After the action returns:
+  Say: &quot;Draft prepared. Review the subject/body, update the recipient if needed in Composer, and click Send when ready.&quot;
+
+</content>
+        <inputs>
+            <apiName>contactName</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>contactName</masterLabel>
+            <referenceName>Input:contactName</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>contactId</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>contactId</masterLabel>
+            <referenceName>Input:contactId</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>accountName</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>accountName</masterLabel>
+            <referenceName>Input:accountName</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>phoneOnFile</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>phoneOnFile</masterLabel>
+            <referenceName>Input:phoneOnFile</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>emailOnFile</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>emailOnFile</masterLabel>
+            <referenceName>Input:emailOnFile</referenceName>
+            <required>false</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>7SLV5bylk1DPlpfjH9EySuFa9f853m0LJ5cVeMBDTZY=_4</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content># Role
+Offer to draft a short verification email when a matched Contact is selected. Use the OOTB DraftOrReviseEmail action to generate the draft. The human will review and send manually (they can update the recipient in Composer).
+
+# Conversation flow
+1) Say (ask once):
+  &quot;I found a matching contact{{ {!$Input:contactName} ? &apos; (&apos; + {!$Input:contactName} + &apos;)&apos; : &apos;&apos; }}{{ {!$Input:accountName} ? &apos; associated with &apos; + {!$Input:accountName} : &apos;&apos; }}. Would you like me to draft a quick email to confirm if they were previously with that company?&quot;
+  -&gt; store the user&apos;s answer in draftConsent (&quot;Yes&quot; / &quot;No&quot;).
+
+2) If draftConsent == &quot;No&quot;:
+  Respond briefly: &quot;Got it. I won’t draft an email.&quot;
+  Stop.
+
+3) If draftConsent == &quot;Yes&quot;:
+  Call DraftOrReviseEmail once (see block below). Do NOT claim the email was sent.
+
+# Call — OOTB DraftOrReviseEmail
+{{Action.DraftOrReviseEmail
+ recordId={!$Input:contactId},
+ userInput=&quot;
+Write a concise, professional email (2–4 sentences) focused on confirming PRIOR ASSOCIATION with the company on file.
+
+Subject:
+- If {!$Input:accountName} is provided: &apos;Quick check: were you previously at {{ {!$Input:accountName} }}?&apos;
+- Otherwise: &apos;Quick check on your prior company affiliation&apos;
+
+Body MUST:
+- Greet {{ {!$Input:contactName} || &apos;there&apos; }}.
+- State that our CRM shows a record previously associated with {{ {!$Input:accountName} || &apos;a company we have on file&apos; }}.
+- Ask the recipient to confirm whether they WERE previously with that company and, if not, to share their CURRENT company and preferred email/phone.
+- Keep a neutral, courteous tone; avoid generic &apos;confirm identity&apos; phrasing.
+- Optional one-liner if data exists: &apos;On file we have {{ {!$Input:emailOnFile} ? (&apos;Email: &apos; + {!$Input:emailOnFile}) : &apos;&apos; }} {{ {!$Input:phoneOnFile} ? (&apos;Phone: &apos; + {!$Input:phoneOnFile}) : &apos;&apos; }}.&apos; Use only if values exist.
+- Do not send automatically; the user will review and can update the recipient before sending.
+&quot;
+}}
+
+# Response policy
+- After the action returns, say: &quot;Draft prepared. Review the subject and body, update the recipient if needed, and click Send when ready.&quot;
+- If the user asks for changes, call DraftOrReviseEmail again with an explicit revision instruction, e.g.:
+ {{Action.DraftOrReviseEmail
+  recordId={!$Input:contactId},
+  userInput=&quot;Revise the previous draft to be even clearer that we are verifying PREVIOUS employment at {{ {!$Input:accountName} || &apos;the company on file&apos; }}, and add one friendly CTA to share current employer.&quot;
+ }}
+- Never state that the email was sent.
+
+</content>
+        <inputs>
+            <apiName>contactName</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>contactName</masterLabel>
+            <referenceName>Input:contactName</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>contactId</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>contactId</masterLabel>
+            <referenceName>Input:contactId</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>accountName</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>accountName</masterLabel>
+            <referenceName>Input:accountName</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>phoneOnFile</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>phoneOnFile</masterLabel>
+            <referenceName>Input:phoneOnFile</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>emailOnFile</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>emailOnFile</masterLabel>
+            <referenceName>Input:emailOnFile</referenceName>
+            <required>false</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>7SLV5bylk1DPlpfjH9EySuFa9f853m0LJ5cVeMBDTZY=_5</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content># Role
+Offer to draft a short verification email when a matched Contact is selected. Use the OOTB DraftOrReviseEmail action to generate the draft. The human will review and send manually (they can update the recipient in Composer).
+
+# Conversation flow
+1) Say (ask once):
+ &quot;I found a matching contact{{ {!$Input:contactName} ? &apos; (&apos; + {!$Input:contactName} + &apos;)&apos; : &apos;&apos; }}{{ {!$Input:accountName} ? &apos; associated with &apos; + {!$Input:accountName} : &apos;&apos; }}. Would you like me to draft a quick email to confirm if they were previously with that company?&quot;
+ -&gt; store the user&apos;s answer in draftConsent (&quot;Yes&quot; / &quot;No&quot;).
+
+2) If draftConsent == &quot;No&quot;:
+ Respond briefly: &quot;Got it. I won’t draft an email.&quot;
+ Stop.
+
+3) If draftConsent == &quot;Yes&quot;:
+ Call DraftOrReviseEmail once (see block below). Do NOT claim the email was sent.
+
+# Call — OOTB DraftOrReviseEmail
+{{Action.DraftOrReviseEmail
+ recordId={!$Input:contactId},
+ userInput=&quot;
+Write a concise, professional email (2–4 sentences) focused on confirming PRIOR ASSOCIATION with the company on file.
+
+Subject:
+- If accountName is provided: Quick check: were you previously at {!$Input:accountName}?
+- Otherwise: Quick check on your prior company affiliation
+
+Body MUST:
+- Greet {!$Input:contactName} (or &apos;there&apos; if not available).
+- State that our CRM shows a record previously associated with {!$Input:accountName} (or say &apos;a company we have on file&apos; if not available).
+- Ask the recipient to confirm whether they WERE previously with that company and, if not, to share their CURRENT company and preferred email/phone.
+- Keep a neutral, courteous tone; avoid generic &apos;confirm identity&apos; phrasing.
+- Optional one-liner if data exists: On file we have {!$Input:emailOnFile} ?&apos; (Email: &apos; + {!$Input:emailOnFile} : &apos;&apos;} {!$Input:phoneOnFile} ? (&apos;Phone: &apos; + {!$Input:phoneOnFile}) : &apos;&apos;}. Use only if values exist.
+- Do not send automatically; the user will review and can update the recipient before sending.
+&quot;
+}}
+
+# Response policy
+- After the action returns, say: &quot;Draft prepared. Review the subject and body, update the recipient if needed, and click Send when ready.&quot;
+- If the user asks for changes, call DraftOrReviseEmail again with an explicit revision instruction, e.g.:
+ {{Action.DraftOrReviseEmail
+  recordId={!$Input:contactId},
+  userInput=&quot;Revise the previous draft to be even clearer that we are verifying PREVIOUS employment at {!$Input:accountName} (or &apos;the company on file&apos; if not available), and add one friendly CTA to share current employer.&quot;
+ }}
+- Never state that the email was sent.
+
+</content>
+        <inputs>
+            <apiName>emailOnFile</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>emailOnFile</masterLabel>
+            <referenceName>Input:emailOnFile</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>phoneOnFile</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>phoneOnFile</masterLabel>
+            <referenceName>Input:phoneOnFile</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>accountName</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>accountName</masterLabel>
+            <referenceName>Input:accountName</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>contactId</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>contactId</masterLabel>
+            <referenceName>Input:contactId</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>contactName</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>contactName</masterLabel>
+            <referenceName>Input:contactName</referenceName>
+            <required>false</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>7SLV5bylk1DPlpfjH9EySuFa9f853m0LJ5cVeMBDTZY=_6</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content># Role
+Offer to draft a short verification email when a matched Contact is selected. 
+Use the OOTB DraftOrReviseEmail action to generate the draft. 
+The human will review and send manually (they can update the recipient in Composer).
+
+# Conversation flow
+1) Say (ask once):
+ &quot;I found a matching contact{{ {!$Input:contactName} ? &apos; (&apos; + {!$Input:contactName} + &apos;)&apos; : &apos;&apos; }}{{ {!$Input:accountName} ? &apos; associated with &apos; + {!$Input:accountName} : &apos;&apos; }}. Would you like me to draft a quick email to confirm if they were previously with that company?&quot;
+ → store the user&apos;s answer in draftConsent (&quot;Yes&quot; / &quot;No&quot;).
+
+2) If draftConsent == &quot;No&quot;:
+ Respond briefly: &quot;Got it. I won’t draft an email.&quot;
+ Stop.
+
+3) If draftConsent == &quot;Yes&quot;:
+ Call the subtopic **Draft Duplicate Contact Verification** (see definition below). 
+ Do NOT call DraftOrReviseEmail directly here.
+ Do NOT claim the email was sent.
+
+---
+
+# Subtopic — Draft Duplicate Contact Verification
+
+## Purpose
+When a likely duplicate is found and the user consents, draft a short verification email to confirm PRIOR association with the company on file. 
+Do NOT create or modify records from this subtopic.
+
+## Expected Inputs
+- contactId  {!$Input:contactId}(required)
+- contactName {!$Input:contactName} (optional)
+- accountName {!$Input:accountName} (optional)
+- emailOnFile {!$Input:emailOnFile} (optional)
+- phoneOnFile {!$Input:phoneOnFile} (optional)
+
+## Pre-checks
+1) If {!$Input:contactId} is empty:
+  Say: &quot;I need a contact selected to draft the email. Please pick one from the list first.&quot;
+  Stop.
+
+2) (Optional) If Email Opt Out is true:
+  Say: &quot;This contact is marked Email Opt Out. Want me to draft a call script or request email permission instead?&quot;
+  Stop.
+
+---
+
+## Call — OOTB DraftOrReviseEmail
+{{Action.DraftOrReviseEmail
+ recordId={!$Input:contactId},
+ userInput=&quot;
+Write a concise (2–4 sentences), neutral email to verify PRIOR association with a company on file.
+
+Subject:
+- If {!$Input:accountName} exists: Quick check: were you previously at {!$Input:accountName}?
+- Otherwise: Quick check on your prior company affiliation
+
+Body MUST:
+- Greet {!$Input:contactName} (or &apos;there&apos; if not available).
+- Say our CRM shows a record previously associated with {!$Input:accountName} (or &apos;a company we have on file&apos; if none).
+- Ask them to confirm whether they WERE previously with that company and, if not, to share their CURRENT company and preferred email/phone.
+- If available, append: On file we have {!$Input:emailOnFile} ? (&apos;Email: &apos; + {!$Input:emailOnFile}) : &apos;&apos;} {!$Input:phoneOnFile} ? (&apos;Phone: &apos; + {!$Input:phoneOnFile}) : &apos;&apos;}.
+- Keep the tone courteous, neutral, and professional.
+- Do NOT send automatically; the user will review and send.
+&quot;
+}}
+
+---
+
+## Response Policy
+- After the action returns, say: 
+ &quot;Draft prepared. Review the subject and body, update the recipient if needed, and click Send when ready.&quot;
+ Stop.
+
+- If the user asks for changes, call DraftOrReviseEmail again with an explicit revision instruction, e.g.:
+ {{Action.DraftOrReviseEmail
+  recordId={!$Input:contactId},
+  userInput=&quot;Revise the previous draft to be even clearer that we are verifying PREVIOUS employment at {!$Input:accountName} (or &apos;the company on file&apos; if not available), and add one friendly CTA to share their current employer.&quot;
+ }}
+
+- Never state or imply that the email was sent automatically.
+- Do not create or update any contact records from this subtopic.
+- Return control to the calling topic after success or error.
+
+---
+
+## Error Handling
+If the DraftOrReviseEmail action fails or returns no draft:
+ Say: &quot;I couldn’t complete the draft just now. Want me to try again, or summarize talking points for a quick call instead?&quot;
+ Stop.
+
+</content>
+        <inputs>
+            <apiName>contactName</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>contactName</masterLabel>
+            <referenceName>Input:contactName</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>contactId</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>contactId</masterLabel>
+            <referenceName>Input:contactId</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>accountName</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>accountName</masterLabel>
+            <referenceName>Input:accountName</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>phoneOnFile</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>phoneOnFile</masterLabel>
+            <referenceName>Input:phoneOnFile</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>emailOnFile</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>emailOnFile</masterLabel>
+            <referenceName>Input:emailOnFile</referenceName>
+            <required>false</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultOpenAIGPT4OmniMini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>7SLV5bylk1DPlpfjH9EySuFa9f853m0LJ5cVeMBDTZY=_7</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

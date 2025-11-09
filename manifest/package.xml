@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>Contact_Guardian</members>
+		<name>Bot</name>
+	</types>
+	<types>
+		<members>FindAccountsByContactName</members>
+		<name>Flow</name>
+	</types>
+	<types>
+		<members>Contact_Guardian</members>
+		<members>Contact_Guardian_v2</members>
+		<members>Contact_Guardian_v3</members>
+		<members>Contact_Guardian_v4</members>
+		<name>GenAiPlannerBundle</name>
+	</types>
+	<types>
+		<members>Contact_Verification_Email</members>
+		<members>Draft_Duplicate_Contact_Verification</members>
+		<members>Draft_Duplicate_Contact_Verification_1</members>
+		<members>VerifyPriorAssociation</members>
+		<name>GenAiPromptTemplate</name>
+	</types>
+	<version>65.0</version>
+</Package>

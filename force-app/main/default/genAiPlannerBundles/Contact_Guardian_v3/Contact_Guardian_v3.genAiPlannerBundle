@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <attributeMappings>
+        <attributeName>Contact_Creation_Verification_16jOy000000EHQn.CreateContact_179Oy000000IAqX.output_ContactId</attributeName>
+        <attributeType>CustomPluginFunctionAttribute</attributeType>
+        <mappingTargetName>ctx_contact_id</mappingTargetName>
+        <mappingType>Variable</mappingType>
+    </attributeMappings>
+    <attributeMappings>
+        <attributeName>Contact_Creation_Verification_16jOy000000EHQn.Contact_Verification_Email_179Oy000000IAqX.input_recipient</attributeName>
+        <attributeType>CustomPluginFunctionAttribute</attributeType>
+        <mappingTargetName>ctx_contact_fullName</mappingTargetName>
+        <mappingType>Variable</mappingType>
+    </attributeMappings>
+    <description>An internal assistant that prevents duplicate Contacts. It checks for existing Contacts by email/phone/name/area code, shows all associated Accounts, and guides the user to stop, relate, or create correctly. When no record exists, it can create a Contact on the current Account or create a new Contact.</description>
+    <localActionLinks>
+        <genAiFunctionName>AnswerQuestionsWithKnowledge_16j803f7b3fa238</genAiFunctionName>
+    </localActionLinks>
+    <localTopicLinks>
+        <genAiPluginName>Contact_Creation_Verification_16jOy000000EHQn</genAiPluginName>
+    </localTopicLinks>
+    <localTopics>
+        <fullName>Contact_Creation_Verification_16jOy000000EHQn</fullName>
+        <canEscalate>true</canEscalate>
+        <description>Create a new Contact. If a matching Contact already exists, do not create—instead offer to draft a short verification email using the Contact Verification EmailCopy prompt template (lists associated Accounts for confirmation).</description>
+        <developerName>Contact_Creation_Verification_16jOy000000EHQn</developerName>
+        <genAiPluginInstructions>
+            <description>Collect inputs (ask only for missing pieces)
+
+First Name, Last Name (or Full Name)
+
+Email (preferred for matching)
+
+Phone (optional)
+
+Company / Account (optional)
+
+Title (optional)</description>
+            <developerName>instruction_1</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Instruction 1</masterLabel>
+            <sortOrder>0</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>Duplicate check
+
+Use data functions (e.g., QueryRecords(Contact) by exact Email, then fallback to Phone, then fuzzy Name + Account) to find likely matches.
+
+If no match: say “I didn’t find an existing contact—shall I create it now?”
+
+If Yes → Call CreateContact action.
+
+If No → end politely.</description>
+            <developerName>instruction_2</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Instruction 2</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>If one or more matches found
+
+Summarize what you found (name, email, primary account).
+
+Ask once:
+“I found a matching contact{{ contactName ? &apos; (&apos; + contactName + &apos;)&apos; : &apos;&apos; }}{{ accountName ? &apos; associated with &apos; + accountName : &apos;&apos; }}. Would you like me to draft a quick verification email listing all associated accounts to confirm if this is the same person?”
+
+Store reply in draftConsent.
+
+If draftConsent = No:
+
+Offer two options:
+a) Use the existing Contact, or
+b) Create a new Contact only if the user insists and provides a differentiator (e.g., different email/domain or account).
+
+If draftConsent = Yes:
+
+Call Contact Verification Email
+
+Provide context:
+
+RecipientRecordId = matched Contact Id
+
+ContactName, ContactEmail
+
+AssociatedAccounts = all Accounts linked to that Contact
+
+NewRecord = the pending new contact details (name, email, company) the user provided
+
+Return a draft and say:
+“Here’s the draft—please review and send from Composer. I haven’t sent anything yet.”</description>
+            <developerName>instruction_3</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Instruction 3</masterLabel>
+            <sortOrder>2</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>Post-email next step
+
+If user confirms it’s the same person → do not create a new Contact. Offer to update the existing record if requested.
+
+If user says it’s a different person (or different org) and provides a unique email/company → proceed with CreateContact.</description>
+            <developerName>instruction_4</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Instruction 4</masterLabel>
+            <sortOrder>3</sortOrder>
+        </genAiPluginInstructions>
+        <genAiPluginInstructions>
+            <description>Never claim you sent the email. You only draft.
+
+Don’t create a new Contact if a confirmed duplicate exists.
+
+Be brief, neutral-professional, and avoid filler phrases.</description>
+            <developerName>instruction_5</developerName>
+            <language xsi:nil="true"/>
+            <masterLabel>Instruction 5</masterLabel>
+            <sortOrder>4</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>CreateContact_179Oy000000IAqX</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Contact_Verification_Email_179Oy000000IAqX</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>Contact_Verification_Email_179Oy000000IAqX</fullName>
+            <description>Creates an email draft to verify whether a newly entered contact already exists in CRM.
+When the agent detects a possible duplicate contact, it calls this action to generate a short, professional verification email listing all accounts currently associated with the matched contact name.
+The agent must not claim that the email was sent—only that it has drafted it.
+The human user will review, edit, and send the draft manually from Composer.
+
+Key behavior:
+
+Uses the Contact Verification Email prompt template.
+
+Passes the matched contact’s name to retrieve related accounts via the Flow (FindAccountsByContactName).
+
+Includes a bulleted list (:AccountsByName) in the email body so the human can verify which account the contact belongs to.</description>
+            <developerName>Contact_Verification_Email_179Oy000000IAqX</developerName>
+            <invocationTarget>Contact_Verification_Email</invocationTarget>
+            <invocationTargetType>generatePromptResponse</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>Contact_Verification_Email</localDeveloperName>
+            <mappingAttributes>
+                <label>Input:recipient</label>
+                <name>input_recipient</name>
+                <parameterName>Input:recipient</parameterName>
+                <parameterType>input</parameterType>
+            </mappingAttributes>
+            <masterLabel>Contact Verification Email</masterLabel>
+            <progressIndicatorMessage>Drafting your contact verification email…</progressIndicatorMessage>
+        </localActions>
+        <localActions>
+            <fullName>CreateContact_179Oy000000IAqX</fullName>
+            <description>Creates a new Salesforce Contact—or, if an exact email match exists, returns that existing Contact instead—to prevent duplicates. Optionally relates the Contact to a specific Account when an AccountId is provided.
+Behavior (happy path)
+
+Initialize outputs.
+
+If Email is provided, attempt a Get Records (first match by Email).
+
+If found → treat as existing: set WasExisting = true, return ContactId, and do not create a new record.
+
+If no email or no match → Create Records (Contact) with provided fields (LastName required; FirstName, Email, Phone, AccountId optional).
+
+Set outputs and exit.
+
+Fault handling
+Any fault in Get/Create sets a concise error Message and exits (no partial changes beyond the platform’s normal transaction behavior).
+
+Inputs (Available for input)
+
+FirstName (Text, optional) — Contact given name.
+
+LastName (Text, required) — Contact family name.
+
+Email (Text, optional) — Used for exact-match dedupe.
+
+Phone (Text, optional) — Primary phone (E.164 preferred but not required).
+
+AccountId (Text, optional) — 18-char Account Id to relate the Contact.
+
+Outputs (Available for output)
+
+ContactId (Text) — Id of the matched or newly created Contact.
+
+WasExisting (Boolean) — true if matched by email; false if created.
+
+Message (Text) — Result summary or concise error detail.
+
+Assumptions &amp; notes
+
+Email de-duplication is exact match only.
+
+Field-level security, validation rules, and triggers apply as normal.
+
+Extendable: add more dedupe logic (e.g., First+Last+Account) or phone normalization if needed.
+
+Designed for use by a Create Contact Agent Action in the General CRM topic.</description>
+            <developerName>CreateContact_179Oy000000IAqX</developerName>
+            <invocationTarget>afCreateContact</invocationTarget>
+            <invocationTargetType>flow</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+            <localDeveloperName>CreateContact</localDeveloperName>
+            <mappingAttributes>
+                <label>AccountId</label>
+                <name>input_AccountId</name>
+                <parameterName>AccountId</parameterName>
+                <parameterType>input</parameterType>
+            </mappingAttributes>
+            <mappingAttributes>
+                <label>Email</label>
+                <name>input_Email</name>
+                <parameterName>Email</parameterName>
+                <parameterType>input</parameterType>
+            </mappingAttributes>
+            <mappingAttributes>
+                <label>FirstName</label>
+                <name>input_FirstName</name>
+                <parameterName>FirstName</parameterName>
+                <parameterType>input</parameterType>
+            </mappingAttributes>
+            <mappingAttributes>
+                <label>LastName</label>
+                <name>input_LastName</name>
+                <parameterName>LastName</parameterName>
+                <parameterType>input</parameterType>
+            </mappingAttributes>
+            <mappingAttributes>
+                <label>Phone</label>
+                <name>input_Phone</name>
+                <parameterName>Phone</parameterName>
+                <parameterType>input</parameterType>
+            </mappingAttributes>
+            <mappingAttributes>
+                <label>ContactId</label>
+                <name>output_ContactId</name>
+                <parameterName>ContactId</parameterName>
+                <parameterType>output</parameterType>
+            </mappingAttributes>
+            <masterLabel>CreateContact</masterLabel>
+            <progressIndicatorMessage>Verifying or Creating a Contact</progressIndicatorMessage>
+        </localActions>
+        <localDeveloperName>Contact_Creation_Verification</localDeveloperName>
+        <masterLabel>Contact Creation &amp; Verification</masterLabel>
+        <pluginType>Topic</pluginType>
+        <scope>You help users create Contacts without creating duplicates. If a likely match exists, you’ll offer to draft a short verification email that lists all associated Accounts to confirm identity before creating a new record.</scope>
+    </localTopics>
+    <masterLabel>Contact Guardian</masterLabel>
+    <plannerActions>
+        <fullName>AnswerQuestionsWithKnowledge_16j803f7b3fa238</fullName>
+        <description>Answers questions about company policies and procedures, troubleshooting steps, or product information. For example: “What is your return policy?” “How do I fix an issue?” or “What features does a product have?”</description>
+        <developerName>AnswerQuestionsWithKnowledge_16j803f7b3fa238</developerName>
+        <invocationTarget>streamKnowledgeSearch</invocationTarget>
+        <invocationTargetType>standardInvocableAction</invocationTargetType>
+        <isConfirmationRequired>false</isConfirmationRequired>
+        <isIncludeInProgressIndicator>true</isIncludeInProgressIndicator>
+        <localDeveloperName>AnswerQuestionsWithKnowledge</localDeveloperName>
+        <masterLabel>Answer Questions with Knowledge</masterLabel>
+        <progressIndicatorMessage>Getting answers</progressIndicatorMessage>
+        <source>EmployeeCopilot__AnswerQuestionsWithKnowledge</source>
+    </plannerActions>
+    <plannerSurfaces>
+        <adaptiveResponseAllowed>true</adaptiveResponseAllowed>
+        <callRecordingAllowed>false</callRecordingAllowed>
+        <surface>SurfaceAction__Messaging</surface>
+        <surfaceType>Messaging</surfaceType>
+    </plannerSurfaces>
+    <plannerType>AiCopilot__ReAct</plannerType>
+</GenAiPlannerBundle>
