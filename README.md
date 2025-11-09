@@ -1,5 +1,24 @@
 # 🛡️ METUS Agentforce – Contact Guardian and Verification (Use Case 2)
 
+# Salesforce DX Project: Next Steps
+
+Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+
+## How Do You Plan to Deploy Your Changes?
+
+Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+
+## Configure Your Salesforce DX Project
+
+The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+
+## Read All About It
+
+- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
+- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
+- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
+- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+
 ## Overview
 **Contact Guardian** is an internal Agentforce-powered assistant designed to prevent duplicate Contacts at the point of creation and to assist users in verifying potential duplicates before creating new records.  
 This use case is part of the **METUS POC** led by Marcus Neal (Salesforce Innovation Technical Architect) to demonstrate measurable data-quality improvements and agentic automation in Salesforce.
@@ -48,20 +67,23 @@ Create a **Topic** named **General CRM** (if not existing) or reuse it.
 Create a **Prompt Template** associated with the General CRM topic:
 
 #### Template Name
-`Contact Verification Prompt`
+`Contact Verification Email`
 
 #### Description
 Guides the Agent to identify duplicate Contacts by name, email, or phone, and to generate a verification email if needed.
 
 #### Template Text
-```text
-You are the Contact Guardian Agent.
-Before creating a new Contact, check Salesforce for existing records with the same name, email, or phone.
-- If exact or probable matches exist, present them clearly with their associated Account names.
-- Ask: "Would you like me to draft a quick verification email to confirm if this contact is the same person?"
-- If user says "Yes," call the `DraftOrReviseEmail` action with prefilled recipient and subject.
-- If user confirms new, call `CreateContact`.
-- Always log the outcome, avoiding internal record IDs and respecting field-level security.
+```Instructions: """
+Follow these instructions precisely. Don’t add any information not provided.
+Use clear, concise, and professional language in the active voice, avoiding filler or redundant phrases.
+The email should include the following:
+
+1. Generate a subject line that politely requests confirmation of contact details.
+2. The salutation must only contain the recipient's first name.
+3. Refer to the sender in the singular voice, using "I" rather than "we".
+4. State that the system found an existing record with similar information and list the associated accounts to help the recipient verify.
+5. Ask the recipient to confirm if they are currently affiliated with one of those accounts or if their organization has changed.
+6. Maintain a courteous, professional tone, and limit the email to 3–5 sentences.
 ```
 
 #### Input Variables
@@ -106,9 +128,9 @@ Attach these **Agent Actions** to the topic:
 |--------------|----------|-----------------------------|
 | `Get Record Details` | Retrieve Contact or Account details | No |
 | `Query Records` | Find matching Contacts by name/email/phone | No |
-| `DraftOrReviseEmail` | Generate verification email for duplicate | Yes |
+| `DraftOrReviseEmail` | Generate verification email for duplicate | Yes |OOTB But might call some Hallicination, so a custom prompt template(Contact Verification Email) was created and this action was removed in V4|
 | `CreateContact` | Create new Contact record if verified as new | No |
-| `Contact Verification Email` | Specialized variant of `DraftOrReviseEmail` prefilled for verification | Yes |
+| `Contact Verification Email` | Creates an email draft to verify whether a newly entered contact already exists in CRM. | Yes |
 
 ---
 
